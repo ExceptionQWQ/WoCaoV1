@@ -60,6 +60,8 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+//Mecanum
+
 struct WheelPWM
 {
     double speed;
@@ -75,31 +77,109 @@ struct WheelPWM
     double pwm;
 }wheelPWM1, wheelPWM2, wheelPWM3, wheelPWM4;
 
+struct RobotInfo
+{
+    double xPos;
+    double yPos;
+    double angle;
+    double wheel1Speed;
+    double wheel2Speed;
+    double wheel3Speed;
+    double wheel4Speed;
+    double rXSpeed;
+    double rYSpeed;
+}robotInfo;
+
+void ClearSpeed()
+{
+    robotInfo.wheel1Speed = 0;
+    robotInfo.wheel2Speed = 0;
+    robotInfo.wheel3Speed = 0;
+    robotInfo.wheel4Speed = 0;
+    robotInfo.rXSpeed = 0;
+    robotInfo.rYSpeed = 0;
+}
+
+void MoveForward(double speed)
+{
+    robotInfo.wheel1Speed += speed;
+    robotInfo.wheel2Speed += -speed;
+    robotInfo.wheel3Speed += -speed;
+    robotInfo.wheel4Speed += speed;
+}
+
+void MoveBackward(double speed)
+{
+    robotInfo.wheel1Speed += -speed;
+    robotInfo.wheel2Speed += speed;
+    robotInfo.wheel3Speed += speed;
+    robotInfo.wheel4Speed += -speed;
+}
+
+void MoveLeft(double speed)
+{
+    robotInfo.wheel1Speed += -speed;
+    robotInfo.wheel2Speed += -speed;
+    robotInfo.wheel3Speed += speed;
+    robotInfo.wheel4Speed += speed;
+}
+
+void MoveRight(double speed)
+{
+    robotInfo.wheel1Speed += speed;
+    robotInfo.wheel2Speed += speed;
+    robotInfo.wheel3Speed += -speed;
+    robotInfo.wheel4Speed += -speed;
+}
+
+void SpinLeft(double speed)
+{
+    robotInfo.wheel1Speed += -speed;
+    robotInfo.wheel2Speed += -speed;
+    robotInfo.wheel3Speed += -speed;
+    robotInfo.wheel4Speed += -speed;
+}
+
+void SpinRight(double speed)
+{
+    robotInfo.wheel1Speed += speed;
+    robotInfo.wheel2Speed += speed;
+    robotInfo.wheel3Speed += speed;
+    robotInfo.wheel4Speed += speed;
+}
+
+void CommitSpeed()
+{
+    wheelPWM1.target = robotInfo.wheel1Speed;
+    wheelPWM2.target = robotInfo.wheel2Speed;
+    wheelPWM3.target = robotInfo.wheel3Speed;
+    wheelPWM4.target = robotInfo.wheel4Speed;
+}
 
 void PID_Init()
 {
-    wheelPWM1.target = 5;
+    wheelPWM1.target = 0;
     wheelPWM1.minPWM = -1000;
     wheelPWM1.maxPWM = 1000;
     wheelPWM1.kp = 15;
     wheelPWM1.ki = 4;
     wheelPWM1.kd = 0;
 
-    wheelPWM2.target = 5;
+    wheelPWM2.target = 0;
     wheelPWM2.minPWM = -1000;
     wheelPWM2.maxPWM = 1000;
     wheelPWM2.kp = 15;
     wheelPWM2.ki = 4;
     wheelPWM2.kd = 0;
 
-    wheelPWM3.target = 5;
+    wheelPWM3.target = 0;
     wheelPWM3.minPWM = -1000;
     wheelPWM3.maxPWM = 1000;
     wheelPWM3.kp = 15;
     wheelPWM3.ki = 4;
     wheelPWM3.kd = 0;
 
-    wheelPWM4.target = 5;
+    wheelPWM4.target = 0;
     wheelPWM4.minPWM = -1000;
     wheelPWM4.maxPWM = 1000;
     wheelPWM4.kp = 15;
@@ -122,6 +202,16 @@ void PID_Tick()
 {
     wheelPWM1.speed = (short) __HAL_TIM_GET_COUNTER(&htim1);
     __HAL_TIM_SET_COUNTER(&htim1, 0);
+
+    wheelPWM2.speed = (short) __HAL_TIM_GET_COUNTER(&htim2);
+    __HAL_TIM_SET_COUNTER(&htim2, 0);
+
+    wheelPWM3.speed = (short) __HAL_TIM_GET_COUNTER(&htim3);
+    __HAL_TIM_SET_COUNTER(&htim3, 0);
+
+    wheelPWM4.speed = (short) __HAL_TIM_GET_COUNTER(&htim4);
+    __HAL_TIM_SET_COUNTER(&htim4, 0);
+
     Do_PID(&wheelPWM1);
     if (wheelPWM1.pwm > 0) {
         HAL_GPIO_WritePin(WHEEL1_A_GPIO_Port, WHEEL1_A_Pin, GPIO_PIN_RESET);
@@ -137,8 +227,6 @@ void PID_Tick()
         __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 0);
     }
 
-    wheelPWM2.speed = (short) __HAL_TIM_GET_COUNTER(&htim2);
-    __HAL_TIM_SET_COUNTER(&htim2, 0);
     Do_PID(&wheelPWM2);
     if (wheelPWM2.pwm > 0) {
         HAL_GPIO_WritePin(WHEEL2_A_GPIO_Port, WHEEL2_A_Pin, GPIO_PIN_RESET);
@@ -154,8 +242,6 @@ void PID_Tick()
         __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_2, 0);
     }
 
-    wheelPWM3.speed = (short) __HAL_TIM_GET_COUNTER(&htim3);
-    __HAL_TIM_SET_COUNTER(&htim3, 0);
     Do_PID(&wheelPWM3);
     if (wheelPWM3.pwm > 0) {
         HAL_GPIO_WritePin(WHEEL3_A_GPIO_Port, WHEEL3_A_Pin, GPIO_PIN_RESET);
@@ -171,8 +257,6 @@ void PID_Tick()
         __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_3, 0);
     }
 
-    wheelPWM4.speed = (short) __HAL_TIM_GET_COUNTER(&htim4);
-    __HAL_TIM_SET_COUNTER(&htim4, 0);
     Do_PID(&wheelPWM4);
     if (wheelPWM4.pwm > 0) {
         HAL_GPIO_WritePin(WHEEL4_A_GPIO_Port, WHEEL4_A_Pin, GPIO_PIN_RESET);
@@ -187,7 +271,6 @@ void PID_Tick()
         HAL_GPIO_WritePin(WHEEL4_B_GPIO_Port, WHEEL4_B_Pin, GPIO_PIN_RESET);
         __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_4, 0);
     }
-
 
 }
 
@@ -256,6 +339,12 @@ int main(void)
     HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
     HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
     HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_4);
+
+
+    ClearSpeed();
+    CommitSpeed();
+
+
 
 
 

@@ -55,37 +55,37 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOG_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOF, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4|GPIO_PIN_12, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOF, WHEEL2_A_Pin|WHEEL2_B_Pin|WHEEL3_A_Pin|WHEEL3_B_Pin
+                          |WHEEL4_A_Pin|WHEEL1_B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(WHEEL1_A_GPIO_Port, WHEEL1_A_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(WHEEL4_B_GPIO_Port, WHEEL4_B_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PF0 PF1 PF2 PF3
-                           PF4 PF12 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4|GPIO_PIN_12;
+  /*Configure GPIO pins : PFPin PFPin PFPin PFPin
+                           PFPin PFPin */
+  GPIO_InitStruct.Pin = WHEEL2_A_Pin|WHEEL2_B_Pin|WHEEL3_A_Pin|WHEEL3_B_Pin
+                          |WHEEL4_A_Pin|WHEEL1_B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PB15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_15;
+  /*Configure GPIO pin : PtPin */
+  GPIO_InitStruct.Pin = WHEEL1_A_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(WHEEL1_A_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PD10 */
-  GPIO_InitStruct.Pin = GPIO_PIN_10;
+  /*Configure GPIO pin : PtPin */
+  GPIO_InitStruct.Pin = WHEEL4_B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+  HAL_GPIO_Init(WHEEL4_B_GPIO_Port, &GPIO_InitStruct);
 
 }
 
